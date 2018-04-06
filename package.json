@@ -1,0 +1,42 @@
+{
+    "author": "Behrooz Kamali",
+    "bugs": {
+        "url": "https://github.com/behroozk/universal-db/issues"
+    },
+    "description": "Global database connector",
+    "devDependencies": {
+        "@types/mysql": "^2.15.4",
+        "@types/node": "^9.6.2",
+        "@types/request-promise": "^4.1.41",
+        "tslint": "^5.9.1",
+        "typescript": "^2.8.1"
+    },
+    "dependencies": {
+        "consola": "^1.2.0",
+        "mysql": "^2.15.0",
+        "neo4j-driver": "^1.5.3",
+        "request": "^2.85.0",
+        "request-promise": "^4.2.2"
+    },
+    "homepage": "https://github.com/behroozk/universal-db#readme",
+    "keywords": [
+        "database",
+        "universal",
+        "client",
+        "mysql",
+        "neo4j",
+        "bolt"
+    ],
+    "license": "MIT",
+    "main": "dist/index.js",
+    "name": "universal-db",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/behroozk/universal-db.git"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "typings": "dist/index.d.ts",
+    "version": "0.1.0"
+}
