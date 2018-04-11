@@ -35,6 +35,7 @@
         "url": "git+https://github.com/behroozk/universal-db.git"
     },
     "scripts": {
+        "build": "tsc",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "typings": "dist/index.d.ts",

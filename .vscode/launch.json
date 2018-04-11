@@ -13,7 +13,7 @@
             "outFiles": [
                 "${workspaceRoot}/dist/**/*.js"
             ],
-            "preLaunchTask": "clean-build",
+            "preLaunchTask": "build",
             "envFile": "${workspaceRoot}/.env"
         },
         {
@@ -25,6 +25,7 @@
             "outFiles": [
                 "${workspaceRoot}/dist/**/*.js"
             ],
+            "preLaunchTask": "build",
             "envFile": "${workspaceRoot}/.env"
         }
     ]
