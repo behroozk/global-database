@@ -53,7 +53,8 @@ export class Neo4jBolt implements IClient {
     }
 
     private neo4jResultToJson(input: any): any {
-        if (typeof input === 'string' || typeof input === 'boolean' || typeof input === 'number') {
+        if (typeof input === 'string' || typeof input === 'boolean'
+            || typeof input === 'number' || input === null) {
             return input;
         } else if (Array.isArray(input)) {
             return input.map((item) => this.neo4jResultToJson(item));
