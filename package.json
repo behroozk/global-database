@@ -6,7 +6,7 @@
     "description": "Global database connector",
     "devDependencies": {
         "@types/mysql": "^2.15.4",
-        "@types/node": "^9.6.4",
+        "@types/node": "^9.6.5",
         "@types/request-promise": "^4.1.41",
         "tslint": "^5.9.1",
         "typescript": "^2.8.1"
@@ -36,8 +36,11 @@
     },
     "scripts": {
         "build": "tsc",
+        "clean": "rm -rf dist/",
+        "clean-build": "npm run clean ; npm run build",
+        "prepare": "npm run clean-build",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "typings": "dist/index.d.ts",
-    "version": "0.1.2"
+    "version": "0.2.0"
 }

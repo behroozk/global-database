@@ -1,7 +1,9 @@
 import * as Logger from 'console';
 import * as requestPromise from 'request-promise';
 
+import { DEFAULT_QUERY_OPTIONS } from '../client/default_query_options';
 import { IClient } from '../client/interface';
+import { IQueryOptions } from '../client/query_options.interface';
 import { INeo4jOptions } from './options.interface';
 
 export class Neo4jHttp implements IClient {
@@ -34,7 +36,7 @@ export class Neo4jHttp implements IClient {
         this.url = `${this.protocol}://${this.host}:${this.port}/db/data/transaction/commit`;
     }
 
-    public async execute(query: string, singularValue: boolean = false): Promise<any> {
+    public async execute(query: string, options: IQueryOptions = DEFAULT_QUERY_OPTIONS): Promise<any> {
         try {
             const requestOptions: requestPromise.OptionsWithUri = {
                 body: {
@@ -55,7 +57,7 @@ export class Neo4jHttp implements IClient {
             const response = await requestPromise.post(requestOptions);
             const parsedResponse = this.parseResponse(response);
 
-            if (singularValue && parsedResponse.length === 1) {
+            if (options.singularValue && parsedResponse.length === 1) {
                 return parsedResponse[0];
             }
 

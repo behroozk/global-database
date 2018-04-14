@@ -1,3 +1,5 @@
+import { IQueryOptions } from './query_options.interface';
+
 export interface IClient {
-  execute(query: string, singularValue?: boolean): Promise<any>;
+  execute(query: string, options?: IQueryOptions): Promise<any>;
 }

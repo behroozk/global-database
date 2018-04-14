@@ -1,7 +1,9 @@
 import * as Logger from 'console';
 import { v1 as Neo4j } from 'neo4j-driver';
 
+import { DEFAULT_QUERY_OPTIONS } from '../client/default_query_options';
 import { IClient } from '../client/interface';
+import { IQueryOptions } from '../client/query_options.interface';
 import { INeo4jOptions } from './options.interface';
 
 export class Neo4jBolt implements IClient {
@@ -30,14 +32,14 @@ export class Neo4jBolt implements IClient {
         );
     }
 
-    public async execute(query: string, singularValue: boolean = false): Promise<any> {
+    public async execute(query: string, options: IQueryOptions = DEFAULT_QUERY_OPTIONS): Promise<any> {
         try {
             const session = this.client.session();
             const response = await session.run(query);
             session.close();
             const parsedResponse = this.parseResponse(response);
 
-            if (singularValue && parsedResponse.length === 1) {
+            if (options.singularValue && parsedResponse.length === 1) {
                 return parsedResponse[0];
             }
 
