@@ -4,6 +4,7 @@ import { v1 as Neo4j } from 'neo4j-driver';
 import { DEFAULT_QUERY_OPTIONS } from '../client/default_query_options';
 import { IClient } from '../client/interface';
 import { IQueryOptions } from '../client/query_options.interface';
+import { neo4jErrorParser } from './error_parser';
 import { INeo4jOptions } from './options.interface';
 
 export class Neo4jBolt implements IClient {
@@ -46,7 +47,7 @@ export class Neo4jBolt implements IClient {
             return parsedResponse;
 
         } catch (error) {
-            throw new Error(error.message || 'unkown neo4j bolt error');
+            neo4jErrorParser(error);
         }
     }
 

@@ -1,9 +1,9 @@
-import * as Logger from 'console';
 import * as requestPromise from 'request-promise';
 
 import { DEFAULT_QUERY_OPTIONS } from '../client/default_query_options';
 import { IClient } from '../client/interface';
 import { IQueryOptions } from '../client/query_options.interface';
+import { neo4jErrorParser } from './error_parser';
 import { INeo4jOptions } from './options.interface';
 
 export class Neo4jHttp implements IClient {
@@ -63,12 +63,15 @@ export class Neo4jHttp implements IClient {
 
             return parsedResponse;
         } catch (error) {
-            Logger.error(error);
-            throw new Error('Error executing neo4j query');
+            neo4jErrorParser(error);
         }
     }
 
     private parseResponse(response: any): any[] {
+        if (response && response.errors && response.errors.length > 0) {
+            throw new Error(response.errors[0].message);
+        }
+
         if (!response || !response.results || response.errors.length > 0) {
             throw new Error('Invalid neo4j result');
         }
