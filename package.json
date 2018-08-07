@@ -6,14 +6,14 @@
     "description": "Global database connector",
     "devDependencies": {
         "@types/mysql": "^2.15.5",
-        "@types/node": "^10.5.0",
-        "@types/request-promise": "^4.1.41",
-        "tslint": "^5.10.0",
-        "typescript": "^2.9.2"
+        "@types/node": "^10.5.7",
+        "@types/request-promise": "^4.1.42",
+        "tslint": "^5.11.0",
+        "typescript": "^3.0.1"
     },
     "dependencies": {
-        "mysql": "^2.15.0",
-        "neo4j-driver": "^1.6.1",
+        "mysql": "^2.16.0",
+        "neo4j-driver": "^1.6.3",
         "request": "^2.87.0",
         "request-promise": "^4.2.2"
     },
@@ -41,5 +41,5 @@
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "typings": "dist/index.d.ts",
-    "version": "0.2.2"
+    "version": "0.3.0"
 }
