@@ -1,9 +1,10 @@
-import * as Logger from 'console';
 import { v1 as Neo4j } from 'neo4j-driver';
 
 import { DEFAULT_QUERY_OPTIONS } from '../client/default_query_options';
 import { IClient } from '../client/interface';
+import { LogLevel } from '../client/options.interface';
 import { IQueryOptions } from '../client/query_options.interface';
+import { Logger } from '../logger';
 import { neo4jErrorParser } from './error_parser';
 import { INeo4jOptions } from './options.interface';
 
@@ -17,10 +18,13 @@ export class Neo4jBolt implements IClient {
     private static DEFAULT_OPTIONS = {
         connectionLimit: 8,
         connectionTimeout: 60 * 1000,
+        logLevel: LogLevel.ERROR,
+        logTimed: true,
         port: 7687,
     };
 
     private client: Neo4j.Driver;
+    private logger: Logger;
 
     constructor(options: Required<INeo4jOptions>) {
         this.client = Neo4j.driver(
@@ -31,14 +35,21 @@ export class Neo4jBolt implements IClient {
                 maxConnectionPoolSize: options.connectionLimit,
             },
         );
+
+        this.logger = new Logger(options.logLevel, options.logTimed);
     }
 
     public async execute(query: string, options: IQueryOptions = DEFAULT_QUERY_OPTIONS): Promise<any> {
         try {
+            const runStartTime: number = Date.now();
             const session = this.client.session();
             const response = await session.run(query);
             session.close();
+            this.logger.log(`neo4j bolt query time: ${Date.now() - runStartTime}ms`);
+
+            const parseStartTime: number = Date.now();
             const parsedResponse = this.parseResponse(response);
+            this.logger.log(`neo4j bolt parse time: ${Date.now() - parseStartTime}ms`);
 
             if (options.singularValue && parsedResponse.length === 1) {
                 return parsedResponse[0];
@@ -47,6 +58,7 @@ export class Neo4jBolt implements IClient {
             return parsedResponse;
 
         } catch (error) {
+            this.logger.error('neo4j bolt error', error);
             neo4jErrorParser(error);
         }
     }
@@ -78,7 +90,7 @@ export class Neo4jBolt implements IClient {
                 output[key] = this.neo4jResultToJson(record.get(key));
             }
         } else if (input.constructor.name !== 'Object') {
-            Logger.log(`neo4j bolt output type: ${input.constructor.name}`);
+            this.logger.log(`neo4j bolt output type: ${input.constructor.name}`);
         } else {
             for (const key in input) {
                 if (!input.hasOwnProperty(key)) { continue; }

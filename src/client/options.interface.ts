@@ -5,4 +5,13 @@ export interface IClientOptions {
     password: string;
     port?: number;
     username: string;
+
+    logLevel?: LogLevel;
+    logTimed?: boolean;
+}
+
+export enum LogLevel {
+    ALL,
+    ERROR,
+    NONE,
 }

@@ -2,7 +2,9 @@ import * as requestPromise from 'request-promise';
 
 import { DEFAULT_QUERY_OPTIONS } from '../client/default_query_options';
 import { IClient } from '../client/interface';
+import { LogLevel } from '../client/options.interface';
 import { IQueryOptions } from '../client/query_options.interface';
+import { Logger } from '../logger';
 import { neo4jErrorParser } from './error_parser';
 import { INeo4jOptions } from './options.interface';
 
@@ -17,6 +19,8 @@ export class Neo4jHttp implements IClient {
     private static DEFAULT_OPTIONS = {
         connectionLimit: 8,
         connectionTimeout: 60 * 1000,
+        logLevel: LogLevel.ERROR,
+        logTimed: true,
     };
 
     private auth: string;
@@ -25,6 +29,7 @@ export class Neo4jHttp implements IClient {
     private port: number;
     private url: string;
     private connectTimeout: number;
+    private logger: Logger;
 
     constructor(options: Required<INeo4jOptions>) {
         this.auth = new Buffer(`${options.username}:${options.password}`).toString('base64');
@@ -34,10 +39,13 @@ export class Neo4jHttp implements IClient {
         this.connectTimeout = options.connectionTimeout;
 
         this.url = `${this.protocol}://${this.host}:${this.port}/db/data/transaction/commit`;
+
+        this.logger = new Logger(options.logLevel, options.logTimed);
     }
 
     public async execute(query: string, options: IQueryOptions = DEFAULT_QUERY_OPTIONS): Promise<any> {
         try {
+            const runStartTime: number = Date.now();
             const requestOptions: requestPromise.OptionsWithUri = {
                 body: {
                     statements: [{
@@ -55,7 +63,11 @@ export class Neo4jHttp implements IClient {
             };
 
             const response = await requestPromise.post(requestOptions);
+            this.logger.log(`neo4j http query time: ${Date.now() - runStartTime}ms`);
+
+            const parseStartTime: number = Date.now();
             const parsedResponse = this.parseResponse(response);
+            this.logger.log(`neo4j http parse time: ${Date.now() - parseStartTime}ms`);
 
             if (options.singularValue && parsedResponse.length === 1) {
                 return parsedResponse[0];
@@ -63,6 +75,7 @@ export class Neo4jHttp implements IClient {
 
             return parsedResponse;
         } catch (error) {
+            this.logger.error('neo4j http error', error);
             neo4jErrorParser(error);
         }
     }
