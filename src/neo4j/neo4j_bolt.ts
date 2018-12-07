@@ -68,36 +68,40 @@ export class Neo4jBolt implements IClient {
     }
 
     private neo4jResultToJson(input: any): any {
-        if (typeof input === 'string' || typeof input === 'boolean'
-            || typeof input === 'number' || input === null) {
+        if (typeof input === 'string'
+            || typeof input === 'boolean'
+            || typeof input === 'number'
+            || input === null
+        ) {
             return input;
         } else if (Array.isArray(input)) {
             return input.map((item) => this.neo4jResultToJson(item));
         } else if (input.constructor.name === 'Integer') {
-            return (input as Neo4j.Integer).toNumber();
+            const integer: Neo4j.Integer = input;
+            return integer.toNumber();
         } else if (input.constructor.name === 'Node') {
-            return this.neo4jResultToJson((input as Neo4j.Node).properties);
+            const node: Neo4j.Node = input;
+            return Object.assign(
+                this.neo4jResultToJson(node.properties),
+                { _id: node.identity.toNumber() },
+            );
         } else if (input.constructor.name === 'Relationship') {
             return this.neo4jResultToJson((input as Neo4j.Relationship).properties);
-        }
-
-        const output: any = {};
-
-        // if input is a neo4j record
-        if (input.constructor.name === 'Record') {
+        } else if (input.constructor.name === 'Record') {
             const record: Neo4j.Record = input;
+            const output: any = {};
             for (const key of record.keys) {
                 output[key] = this.neo4jResultToJson(record.get(key));
             }
+            return output;
         } else if (input.constructor.name !== 'Object') {
             this.logger.log(`neo4j bolt output type: ${input.constructor.name}`);
         } else {
-            for (const key in input) {
-                if (!input.hasOwnProperty(key)) { continue; }
+            const output: any = {};
+            for (const key of Object.keys(input)) {
                 output[key] = this.neo4jResultToJson(input[key]);
             }
+            return output;
         }
-
-        return output;
     }
 }
