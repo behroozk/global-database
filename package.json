@@ -6,16 +6,15 @@
     "description": "Global database connector",
     "devDependencies": {
         "@types/mysql": "^2.15.5",
-        "@types/node": "^10.12.12",
-        "@types/request-promise": "^4.1.42",
-        "tslint": "^5.11.0",
+        "@types/node": "^10.12.18",
+        "@types/request": "^2.48.1",
+        "tslint": "^5.12.0",
         "typescript": "^3.2.2"
     },
     "dependencies": {
         "mysql": "^2.16.0",
         "neo4j-driver": "^1.7.2",
-        "request": "^2.88.0",
-        "request-promise": "^4.2.2"
+        "request": "^2.88.0"
     },
     "homepage": "https://github.com/behroozk/universal-db#readme",
     "keywords": [
@@ -41,5 +40,5 @@
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "typings": "dist/index.d.ts",
-    "version": "0.3.2"
+    "version": "0.3.3"
 }
