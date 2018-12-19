@@ -1,4 +1,5 @@
-import * as requestPromise from 'request-promise';
+import * as request from 'request';
+import { promisify } from 'util';
 
 import { DEFAULT_QUERY_OPTIONS } from '../client/default_query_options';
 import { IClient } from '../client/interface';
@@ -7,6 +8,8 @@ import { IQueryOptions } from '../client/query_options.interface';
 import { Logger } from '../logger';
 import { neo4jErrorParser } from './error_parser';
 import { INeo4jOptions } from './options.interface';
+
+const requestPostAsync = promisify<request.OptionsWithUri & request.CoreOptions, any>(request.post);
 
 export class Neo4jHttp implements IClient {
     public static getClient(options: INeo4jOptions): Promise<Neo4jHttp> {
@@ -46,7 +49,7 @@ export class Neo4jHttp implements IClient {
     public async execute(query: string, options: IQueryOptions = DEFAULT_QUERY_OPTIONS): Promise<any> {
         try {
             const runStartTime: number = Date.now();
-            const requestOptions: requestPromise.OptionsWithUri = {
+            const requestOptions: request.OptionsWithUri & request.CoreOptions = {
                 body: {
                     statements: [{
                         statement: query,
@@ -62,7 +65,7 @@ export class Neo4jHttp implements IClient {
                 uri: this.url,
             };
 
-            const response = await requestPromise.post(requestOptions);
+            const response = await requestPostAsync(requestOptions);
             this.logger.log(`neo4j http query time: ${Date.now() - runStartTime}ms`);
 
             const parseStartTime: number = Date.now();
